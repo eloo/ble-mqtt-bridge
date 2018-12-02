@@ -15,7 +15,7 @@ from bluepy.btle import Scanner, DefaultDelegate, Peripheral
 with open('config/ble-mqtt-conf.json', 'r') as f:
     config = json.load(f)
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
 
 MQTT_HOST = config.get("mqtt", {}).get("host", "localhost")
 MQTT_PORT = int(config.get("mqtt", {}).get("port", 1883))
@@ -47,11 +47,11 @@ class ScanDelegate(DefaultDelegate):
             logging.info("dev {} rssi {}".format(dev.addr, dev.rssi))
             # publish all values individually
             for d in dev.getScanData():
-                logging.debug('ble/{}/advertisement/{:02x}'.format(dev.addr, d[0]), d[2])
+                logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, d[0], d[2]))
                 client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, d[0]), d[2])
             # publish a JSON map of all values
             scan_map = { d[1]: d[2] for d in dev.getScanData() }
-            logging.debug('ble/{}/advertisement/json'.format(dev.addr), json.dumps(scan_map))
+            logging.debug('ble/{}/advertisement/json: {}'.format(dev.addr, json.dumps(scan_map)))
             client.publish('ble/{}/advertisement/json'.format(dev.addr), json.dumps(scan_map))
         except Exception as e:
             # report errors
