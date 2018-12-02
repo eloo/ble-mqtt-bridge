@@ -26,7 +26,12 @@ SCAN_INITIAL = bool(config.get("scan", {}).get("initial", True))
 SCAN_LOOP = bool(config.get("scan", {}).get("loop", False))
 SCAN_TIMEOUT = int(config.get("scan", {}).get("timeout", 5))
 
+ONLY_KNOWN_DEVICES = config.get("onlyKnownDevices", False)
 KNOWN_DEVICES = config.get("knownDevices", [])
+KNOWN_DEVICES_MAP = {}
+
+for device in KNOWN_DEVICES:
+    KNOWN_DEVICES_MAP[device[mac]] = device
 
 client = mqtt.Client()
 # Check if MQTT user and/or password are specified
@@ -40,6 +45,10 @@ class ScanDelegate(DefaultDelegate):
 
     def handleDiscovery(self, dev, isNewDev, isNewData):
         ''' Called when BLE advertising reports are received '''
+        if dev.addr not in KNOWN_DEVICES_MAP:
+            return        
+        else:
+            dev.addr = KNOWN_DEVICES_MAP[dev.addr]['name']
         try:
             # publish the RSSI
             client.publish('ble/{}/rssi'.format(dev.addr), dev.rssi)
