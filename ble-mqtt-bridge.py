@@ -32,7 +32,7 @@ KNOWN_DEVICES = config.get("knownDevices", [])
 KNOWN_DEVICES_MAP = {}
 
 for device in KNOWN_DEVICES:
-    KNOWN_DEVICES_MAP[device[mac]] = device
+    KNOWN_DEVICES_MAP[device['mac']] = device
 
 client = mqtt.Client()
 # Check if MQTT user and/or password are specified
