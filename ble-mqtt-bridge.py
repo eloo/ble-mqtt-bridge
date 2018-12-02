@@ -60,7 +60,6 @@ class ScanDelegate(DefaultDelegate):
                 logging.debug('scanData: {}'.format(d))
                 adtype = d[0]
                 value = d[2]
-                logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
                 if adtype==255 and value[:4]=="9005":
                     data = value[4:]
                     value = codecs.decode(data,"hex").decode()
