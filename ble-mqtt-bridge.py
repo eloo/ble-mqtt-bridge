@@ -16,7 +16,7 @@ from bluepy.btle import Scanner, DefaultDelegate, Peripheral
 with open('config/ble-mqtt-conf.json', 'r') as f:
     config = json.load(f)
 
-logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.DEBUG)
+logging.basicConfig(format='%(asctime)s - %(message)s', level=logging.INFO)
 
 MQTT_HOST = config.get("mqtt", {}).get("host", "localhost")
 MQTT_PORT = int(config.get("mqtt", {}).get("port", 1883))
@@ -65,8 +65,8 @@ class ScanDelegate(DefaultDelegate):
                     value = codecs.decode(data,"hex").decode()
                     value_obj = json.loads(value)
                     for k, v in value_obj.items():
-                        logging.debug('ble/{}/{}: {}'.format(dev.addr, k, v))
-                        client.publish('ble/{}/{}'.format(dev.addr, k), v)
+                        logging.debug('ble/advertise/{}/{}: {}'.format(dev.addr, k, v))
+                        client.publish('ble/advertise/{}/{}'.format(dev.addr, k), v)
                 logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
                 client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, adtype), value)
             # publish a JSON map of all values
