@@ -67,7 +67,7 @@ class ScanDelegate(DefaultDelegate):
                 logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
                 client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, adtype), value)
             # publish a JSON map of all values
-            scan_map = { d[1]: value for d in dev.getScanData() }
+            scan_map = { d[1]: d[2] for d in dev.getScanData() }
             logging.debug('ble/{}/advertisement/json: {}'.format(dev.addr, json.dumps(scan_map)))
             client.publish('ble/{}/advertisement/json'.format(dev.addr), json.dumps(scan_map))
         except Exception as e:
