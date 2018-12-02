@@ -47,11 +47,11 @@ class ScanDelegate(DefaultDelegate):
             logging.info("dev {} rssi {}".format(dev.addr, dev.rssi))
             # publish all values individually
             for d in dev.getScanData():
-                loggind.debug('ble/{}/advertisement/{:02x}'.format(dev.addr, d[0]), d[2])
+                logging.debug('ble/{}/advertisement/{:02x}'.format(dev.addr, d[0]), d[2])
                 client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, d[0]), d[2])
             # publish a JSON map of all values
             scan_map = { d[1]: d[2] for d in dev.getScanData() }
-            loggind.debug('ble/{}/advertisement/json'.format(dev.addr), json.dumps(scan_map))
+            logging.debug('ble/{}/advertisement/json'.format(dev.addr), json.dumps(scan_map))
             client.publish('ble/{}/advertisement/json'.format(dev.addr), json.dumps(scan_map))
         except Exception as e:
             # report errors
