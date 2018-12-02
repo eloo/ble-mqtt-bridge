@@ -63,6 +63,10 @@ class ScanDelegate(DefaultDelegate):
                 if adtype==255 and value[:4]=="9005":
                     data = value[4:]
                     value = codecs.decode(data,"hex").decode()
+                    value_obj = json.loads(value)
+                    for k, v in value_obj.items():
+                        logging.debug('ble/{}/{}: {}'.format(dev.addr, k, v))
+                        client.publish('ble/{}/{}'.format(dev.addr, k), v)
                 logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
                 client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, adtype), value)
             # publish a JSON map of all values
@@ -286,8 +290,8 @@ class CommandThread(Thread):
 
 # start the BLE scan and let it run continously
 
-#ScannerThread()
-CommandThread()
+ScannerThread()
+#CommandThread()
 
 client.connect(MQTT_HOST, MQTT_PORT)
 client.loop_start()
