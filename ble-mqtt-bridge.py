@@ -63,7 +63,7 @@ class ScanDelegate(DefaultDelegate):
                 logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
                 if adtype==255 and value[:4]=="9005":
                     data = value[4:]
-                    value = codecs.decode(data,"hex")
+                    value = codecs.decode(data,"hex").decode()
                 logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
                 client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, adtype), value)
             # publish a JSON map of all values
