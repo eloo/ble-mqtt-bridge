@@ -7,6 +7,7 @@ import json
 import argparse
 import datetime
 import logging
+import codecs
 from threading import Thread, Semaphore
 from concurrent.futures import ThreadPoolExecutor
 from time import sleep
@@ -56,10 +57,17 @@ class ScanDelegate(DefaultDelegate):
             logging.info("dev {} rssi {}".format(dev.addr, dev.rssi))
             # publish all values individually
             for d in dev.getScanData():
-                logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, d[0], d[2]))
-                client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, d[0]), d[2])
+                logging.debug('scanData: {}'.format(d))
+                adtype = d[0]
+                value = d[2]
+                logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
+                if adtype==255 and value[:4]=="9005":
+                    data = value[4:]
+                    value = codecs.decode(data,"hex")
+                logging.debug('ble/{}/advertisement/{:02x}: {}'.format(dev.addr, adtype, value))
+                client.publish('ble/{}/advertisement/{:02x}'.format(dev.addr, adtype), value)
             # publish a JSON map of all values
-            scan_map = { d[1]: d[2] for d in dev.getScanData() }
+            scan_map = { d[1]: value for d in dev.getScanData() }
             logging.debug('ble/{}/advertisement/json: {}'.format(dev.addr, json.dumps(scan_map)))
             client.publish('ble/{}/advertisement/json'.format(dev.addr), json.dumps(scan_map))
         except Exception as e:
